@@ -1,1 +1,5 @@
-console.log('asdf')
+function logInfo(){
+	console.log('asdf')
+}
+
+
