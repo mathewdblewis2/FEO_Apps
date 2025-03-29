@@ -51,6 +51,8 @@ async function main(file){
             shipto += Q[i]+' '
         }
 
+        console.log(textContent)
+
         shipto = shipto.replace("/", "")
 
         // length is 2 if the page contains an invoice number

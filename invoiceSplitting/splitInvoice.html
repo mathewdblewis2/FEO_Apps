@@ -5,75 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Split PDF into Multiple Invoices and Download as ZIP</title>
     
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #1a1a1a;
-        color: #e0e0e0;
-        margin: 0;
-        padding: 0;
-    }
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+        }
 
-    header {
-        background-color: #333;
-        color: white;
-        padding: 20px;
-        text-align: center;
-    }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
 
-    h1 {
-        margin: 0;
-        font-size: 2.5em;
-    }
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
 
-    .container {
-        max-width: 900px;
-        margin: 30px auto;
-        padding: 20px;
-        background-color: #2a2a2a;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-    }
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
 
-    h2 {
-        font-size: 1.5em;
-        margin-bottom: 20px;
-        color: #d1d1d1;
-    }
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #d1d1d1;
+        }
 
-    #pdf-upload {
-        margin: 20px 0;
-        padding: 10px;
-        font-size: 1.1em;
-        border: 1px solid #555;
-        border-radius: 4px;
-        width: 100%;
-        display: block;
-        background-color: #333;
-        color: #e0e0e0;
-    }
+        #pdf-upload {
+            margin: 20px 0;
+            padding: 10px;
+            font-size: 1.1em;
+            border: 1px solid #555;
+            border-radius: 4px;
+            width: 100%;
+            display: block;
+            background-color: #333;
+            color: #e0e0e0;
+        }
 
-    #pdf-upload::placeholder {
-        color: #bbb;
-    }
+        #pdf-upload::placeholder {
+            color: #bbb;
+        }
 
-    button {
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        font-size: 1em;
-        cursor: pointer;
-        border-radius: 4px;
-    }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 4px;
+        }
 
-    button:hover {
-        background-color: #45a049;
-    }
-</style>
+        button:hover {
+            background-color: #45a049;
+        }
 
+        /* Spinner Styles */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fff;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            display: none; /* Initially hidden */
+            margin: 0 auto;
+        }
 
-    
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+    </style>
 </head>
 <body>
     <header>
@@ -83,28 +98,35 @@
     <div class="container">
         <h2>Upload a PDF of multiple invoices to separate each invoice</h2>
         <input type="file" id="pdf-upload" accept="application/pdf" onchange="processDocument()" />
+        
+        <div class="spinner" id="spinner"></div>
+
         <div id="download-links"></div>
     </div>
 
-    <!-- <script src="script.js"></script> -->
     <script src="https://cdn.jsdelivr.net/gh/mathewdblewis2/FEO_Apps/invoiceSplitting/script.js"></script>
 
     <script>
         async function processDocument(){
             const fileInput = document.getElementById('pdf-upload')
             const file = fileInput.files[0]
+            const spinner = document.getElementById('spinner');  // Get the spinner element
 
             if (!file){
                 console.log('No file selected')
                 return
             }
 
+            // Show the spinner when the document is being processed
+            spinner.style.display = 'block';
+
             const reader = new FileReader();
             reader.onload = async function(event) {
                 zip = await main(file)
                 if (zip == ''){
-                    console.log('Improperly formmated PDF')
+                    console.log('Improperly formatted PDF')
                     alert("Are you sure this is the right PDF? It does not seem to be properly formatted.")
+                    spinner.style.display = 'none';  // Hide spinner if error occurs
                     return
                 }
 
@@ -114,14 +136,15 @@
                     link.href = URL.createObjectURL(content)
                     link.download = 'extracted_pages.zip' // name of the downloaded file
                     link.click();  // Automatically trigger the download
-                    alert('The zip file has been downloaded!')
+
+                    // Hide the spinner when the ZIP download is triggered
+                    spinner.style.display = 'none';
+
+                    alert('The zip file has been downloaded!');
                 });
             }
-            reader.readAsArrayBuffer(file)
+            reader.readAsArrayBuffer(file);
         }
     </script>
-
-
-
 </body>
 </html>
