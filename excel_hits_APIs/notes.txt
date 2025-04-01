@@ -1,0 +1,20 @@
+according to chatgpt, excel can hit an API
+
+consider this:
+have a simple app on render that gives an API
+that when hit returns the processed PDF zip
+excel can hit this api and save the resulting pdf
+it should be able to both find the pdf on the machine
+and save it result
+
+
+more general:
+hit the api with the data (eg: pdf) as well as code
+run the code against the data and return the result
+this way, Dad would have a string containing the code
+inside of excel and he could write it as needed
+then hit the api
+
+
+
+
